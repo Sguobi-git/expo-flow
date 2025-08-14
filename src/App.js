@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight, Building2, Package, CheckCircle, Shield } from 'lucide-react';
 
 function App() {
-  const [stage, setStage] = useState('intro'); // 'intro', 'welcome', 'booth-entry', 'options'
+  const [stage, setStage] = useState('intro'); // 'intro', 'welcome', 'options'
   const [boothNumber, setBoothNumber] = useState('');
   const [isAnimating, setIsAnimating] = useState(true);
   const [introProgress, setIntroProgress] = useState(0);
@@ -132,7 +132,7 @@ function App() {
     );
   }
 
-  // Welcome Screen - Clean and Professional
+  // ExpoFlow Main Page with Booth Input
   if (stage === 'welcome') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
@@ -144,7 +144,7 @@ function App() {
         </div>
 
         <div className="relative min-h-screen flex items-center justify-center p-6">
-          <div className="text-center max-w-4xl mx-auto">
+          <div className="text-center max-w-md mx-auto w-full">
             
             {/* Logo with smooth entrance */}
             <div className={`mb-8 transform transition-all duration-1000 ${isAnimating ? 'translate-y-10 opacity-0' : 'translate-y-0 opacity-100'}`}>
@@ -153,10 +153,10 @@ function App() {
 
             {/* Main Title */}
             <div className={`space-y-6 mb-12 transform transition-all duration-1000 delay-300 ${isAnimating ? 'translate-y-10 opacity-0' : 'translate-y-0 opacity-100'}`}>
-              <h1 className="text-5xl md:text-7xl font-black text-gray-900 mb-4">
+              <h1 className="text-5xl md:text-6xl font-black text-gray-900 mb-4">
                 ExpoFlow
               </h1>
-              <p className="text-xl md:text-2xl text-teal-600 font-medium mb-2">
+              <p className="text-xl text-teal-600 font-medium mb-2">
                 Order Tracking System
               </p>
               <div className="flex items-center justify-center space-x-2">
@@ -165,36 +165,50 @@ function App() {
               </div>
             </div>
 
-            {/* Feature Cards */}
-            <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-2xl mx-auto transform transition-all duration-1000 delay-600 ${isAnimating ? 'translate-y-10 opacity-0' : 'translate-y-0 opacity-100'}`}>
-              <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 group">
-                <Package className="w-10 h-10 text-teal-600 mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Smart Orders</h3>
-                <p className="text-gray-600 text-sm">Real-time order tracking and management</p>
-              </div>
-              
-              <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 group">
-                <CheckCircle className="w-10 h-10 text-teal-600 mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Digital Checklists</h3>
-                <p className="text-gray-600 text-sm">Track booth setup progress instantly</p>
-              </div>
-            </div>
+            {/* Booth Number Input Card */}
+            <div className={`transform transition-all duration-1000 delay-600 ${isAnimating ? 'translate-y-10 opacity-0' : 'translate-y-0 opacity-100'}`}>
+              <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 border border-gray-200 shadow-lg">
+                
+                {/* Input Section */}
+                <div className="space-y-6">
+                  <div className="relative">
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Enter Your Booth Number
+                    </label>
+                    <div className="relative">
+                      <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-teal-600" />
+                      <input
+                        type="text"
+                        value={boothNumber}
+                        onChange={(e) => setBoothNumber(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        placeholder="e.g., A-123, B-456"
+                        className="block w-full pl-10 pr-4 py-4 border border-gray-300 rounded-2xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-lg font-medium"
+                        autoFocus
+                      />
+                    </div>
+                  </div>
 
-            {/* Call to Action */}
-            <div className={`transform transition-all duration-1000 delay-900 ${isAnimating ? 'translate-y-10 opacity-0' : 'translate-y-0 opacity-100'}`}>
-              <button
-                onClick={() => setStage('booth-entry')}
-                className="group bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white font-semibold py-4 px-8 rounded-2xl text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
-              >
-                <div className="flex items-center space-x-3">
-                  <span>Access Your Orders</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <button
+                    onClick={handleBoothSubmit}
+                    disabled={!boothNumber.trim()}
+                    className={`w-full py-4 rounded-2xl font-semibold text-white transition-all duration-300 ${
+                      boothNumber.trim()
+                        ? 'bg-gradient-to-r from-teal-600 to-teal-700 hover:shadow-lg hover:scale-105'
+                        : 'bg-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    <div className="flex items-center justify-center space-x-2">
+                      <span>Continue</span>
+                      <ArrowRight className="w-5 h-5" />
+                    </div>
+                  </button>
                 </div>
-              </button>
+              </div>
             </div>
 
             {/* System Status */}
-            <div className={`mt-8 transform transition-all duration-1000 delay-1200 ${isAnimating ? 'translate-y-10 opacity-0' : 'translate-y-0 opacity-100'}`}>
+            <div className={`mt-8 transform transition-all duration-1000 delay-900 ${isAnimating ? 'translate-y-10 opacity-0' : 'translate-y-0 opacity-100'}`}>
               <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
                 <Shield className="w-4 h-4 text-green-500" />
                 <span>System Online • Professional Exhibition Management</span>
@@ -207,144 +221,82 @@ function App() {
     );
   }
 
-  // Booth Number Entry Screen
-  if (stage === 'booth-entry') {
+  // Options Selection Screen - Full Page Cards
+  if (stage === 'options') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+        {/* Subtle background pattern */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-teal-100/40 rounded-full blur-3xl"></div>
           <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gray-100/60 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 right-1/3 w-48 h-48 bg-teal-50/60 rounded-full blur-3xl"></div>
         </div>
 
-        <div className="relative w-full max-w-md">
-          <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 border border-gray-200 shadow-2xl">
+        <div className="relative min-h-screen flex items-center justify-center p-6">
+          <div className="w-full max-w-5xl mx-auto">
             
             {/* Header */}
-            <div className="text-center mb-8">
-              <ExpoLogo size="large" />
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mt-6 mb-2">Welcome Back</h2>
-              <p className="text-teal-600 font-medium">Enter your booth number to continue</p>
+            <div className="text-center mb-16">
+              <div className="mb-6">
+                <ExpoLogo size="large" />
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Booth {boothNumber}
+              </h2>
+              <p className="text-xl text-teal-600 font-medium">Choose your action</p>
             </div>
 
-            {/* Booth Number Input */}
-            <div className="space-y-6">
-              <div className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Booth Number
-                </label>
-                <div className="relative">
-                  <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-teal-600" />
-                  <input
-                    type="text"
-                    value={boothNumber}
-                    onChange={(e) => setBoothNumber(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="e.g., A-123, B-456"
-                    className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-2xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-base"
-                    autoFocus
-                  />
+            {/* Large Option Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+              
+              {/* Orders Card */}
+              <div className="group cursor-pointer transform transition-all duration-300 hover:scale-105">
+                <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-12 border border-gray-200 hover:border-teal-400 shadow-lg hover:shadow-xl transition-all duration-300 h-80 flex flex-col justify-center">
+                  <div className="text-center">
+                    <div className="w-28 h-28 bg-gradient-to-r from-teal-600 to-teal-700 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform">
+                      <Package className="w-14 h-14 text-white" />
+                    </div>
+                    <h3 className="text-3xl font-bold text-gray-900 mb-6">Orders</h3>
+                    <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+                      Track your exhibition orders in real-time with detailed progress updates
+                    </p>
+                    <div className="flex items-center justify-center space-x-3 text-teal-600 group-hover:text-teal-700 font-semibold text-lg">
+                      <span>View Orders</span>
+                      <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <button
-                onClick={handleBoothSubmit}
-                disabled={!boothNumber.trim()}
-                className={`w-full py-4 rounded-2xl font-semibold text-white transition-all duration-300 ${
-                  boothNumber.trim()
-                    ? 'bg-gradient-to-r from-teal-600 to-teal-700 hover:shadow-lg hover:scale-105'
-                    : 'bg-gray-400 cursor-not-allowed'
-                }`}
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <span>Continue</span>
-                  <ArrowRight className="w-5 h-5" />
+              {/* Checklist Card */}
+              <div className="group cursor-pointer transform transition-all duration-300 hover:scale-105">
+                <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-12 border border-gray-200 hover:border-teal-400 shadow-lg hover:shadow-xl transition-all duration-300 h-80 flex flex-col justify-center">
+                  <div className="text-center">
+                    <div className="w-28 h-28 bg-gradient-to-r from-teal-600 to-teal-700 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform">
+                      <CheckCircle className="w-14 h-14 text-white" />
+                    </div>
+                    <h3 className="text-3xl font-bold text-gray-900 mb-6">Checklist</h3>
+                    <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+                      Monitor your booth setup progress with comprehensive tracking
+                    </p>
+                    <div className="flex items-center justify-center space-x-3 text-teal-600 group-hover:text-teal-700 font-semibold text-lg">
+                      <span>View Progress</span>
+                      <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                    </div>
+                  </div>
                 </div>
-              </button>
+              </div>
             </div>
 
             {/* Back Button */}
-            <button
-              onClick={() => setStage('welcome')}
-              className="w-full mt-4 text-gray-600 hover:text-gray-900 py-3 px-6 rounded-2xl border border-gray-200 hover:bg-gray-50 transition-all duration-300 text-sm"
-            >
-              ← Back to Welcome
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Options Selection Screen
-  if (stage === 'options') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-6">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-teal-100/40 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gray-100/60 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="relative w-full max-w-4xl">
-          
-          {/* Header */}
-          <div className="text-center mb-12">
-            <ExpoLogo size="large" />
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-6 mb-4">
-              Booth {boothNumber}
-            </h2>
-            <p className="text-teal-600 font-medium text-lg">Choose your action</p>
-          </div>
-
-          {/* Options Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            
-            {/* Orders Option */}
-            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-105">
-              <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 border border-gray-200 hover:border-teal-400 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="text-center">
-                  <div className="w-20 h-20 bg-gradient-to-r from-teal-600 to-teal-700 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                    <Package className="w-10 h-10 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Orders</h3>
-                  <p className="text-gray-600 mb-6">
-                    Track your exhibition orders in real-time
-                  </p>
-                  <div className="flex items-center justify-center space-x-2 text-teal-600 group-hover:text-teal-700 font-medium">
-                    <span>View Orders</span>
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </div>
+            <div className="text-center">
+              <button
+                onClick={() => setStage('welcome')}
+                className="text-gray-600 hover:text-gray-900 py-3 px-6 rounded-2xl border border-gray-200 hover:bg-gray-50 transition-all duration-300"
+              >
+                ← Back to Booth Entry
+              </button>
             </div>
-
-            {/* Checklist Option */}
-            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-105">
-              <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 border border-gray-200 hover:border-teal-400 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="text-center">
-                  <div className="w-20 h-20 bg-gradient-to-r from-teal-600 to-teal-700 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                    <CheckCircle className="w-10 h-10 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Checklist</h3>
-                  <p className="text-gray-600 mb-6">
-                    Monitor your booth setup progress
-                  </p>
-                  <div className="flex items-center justify-center space-x-2 text-teal-600 group-hover:text-teal-700 font-medium">
-                    <span>View Progress</span>
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Back Button */}
-          <div className="text-center mt-8">
-            <button
-              onClick={() => setStage('booth-entry')}
-              className="text-gray-600 hover:text-gray-900 py-3 px-6 rounded-2xl border border-gray-200 hover:bg-gray-50 transition-all duration-300"
-            >
-              ← Change Booth Number
-            </button>
           </div>
         </div>
       </div>
