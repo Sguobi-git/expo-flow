@@ -2,17 +2,47 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight, Building2, Package, CheckCircle, Shield } from 'lucide-react';
 
 function App() {
-  const [stage, setStage] = useState('welcome'); // 'welcome', 'booth-entry', 'options'
+  const [stage, setStage] = useState('intro'); // 'intro', 'welcome', 'booth-entry', 'options'
   const [boothNumber, setBoothNumber] = useState('');
   const [isAnimating, setIsAnimating] = useState(true);
+  const [introProgress, setIntroProgress] = useState(0);
 
-  // Welcome animation sequence
+  // Intro animation sequence - Apple/Google style
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsAnimating(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
+    if (stage === 'intro') {
+      // Phase 1: Logo appears (0-1s)
+      const timer1 = setTimeout(() => setIntroProgress(1), 300);
+      
+      // Phase 2: Logo scales and glows (1-2s)
+      const timer2 = setTimeout(() => setIntroProgress(2), 1200);
+      
+      // Phase 3: ExpoFlow text appears (2-3s)
+      const timer3 = setTimeout(() => setIntroProgress(3), 2200);
+      
+      // Phase 4: Transition to main app (3-4.5s)
+      const timer4 = setTimeout(() => {
+        setIntroProgress(4);
+        setTimeout(() => setStage('welcome'), 1000);
+      }, 3500);
+      
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+        clearTimeout(timer3);
+        clearTimeout(timer4);
+      };
+    }
+  }, [stage]);
+
+  // Welcome page animation sequence
+  useEffect(() => {
+    if (stage === 'welcome') {
+      const timer = setTimeout(() => {
+        setIsAnimating(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [stage]);
 
   const ExpoLogo = ({ size = "large" }) => {
     return (
@@ -37,6 +67,70 @@ function App() {
       handleBoothSubmit();
     }
   };
+
+  // Pure Welcome Animation - Apple Style Minimalism
+  if (stage === 'intro') {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center overflow-hidden">
+        
+        <div className="relative text-center">
+          
+          {/* Pure "Welcome" Text with Letter-by-Letter Animation */}
+          <div className={`transition-all duration-1000 ease-out ${
+            introProgress >= 1 ? 'opacity-100' : 'opacity-0'
+          } ${
+            introProgress >= 4 ? 'opacity-0 translate-y-8 scale-95' : 'translate-y-0 scale-100'
+          }`}>
+            <div className="relative">
+              {/* Individual letters of "Welcome" */}
+              <div className="flex justify-center">
+                {['W', 'e', 'l', 'c', 'o', 'm', 'e'].map((letter, index) => (
+                  <span
+                    key={index}
+                    className={`text-6xl md:text-8xl lg:text-9xl font-light text-black transition-all duration-700 ease-out ${
+                      introProgress >= 2 && introProgress < 4 ? 'opacity-100 translate-y-0' : 'opacity-0'
+                    } ${
+                      introProgress < 2 ? 'translate-y-12' : 'translate-y-0'
+                    }`}
+                    style={{
+                      transitionDelay: introProgress >= 2 && introProgress < 4 ? `${index * 120}ms` : '0ms',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif',
+                      letterSpacing: '-0.02em',
+                      fontWeight: '300'
+                    }}
+                  >
+                    {letter}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Custom animations for Apple-like smoothness */}
+        <style jsx>{`
+          @keyframes letterFloat {
+            from {
+              opacity: 0;
+              transform: translateY(40px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          @supports (-webkit-backdrop-filter: blur(10px)) {
+            .letter-smooth {
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale;
+            }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   // Welcome Screen - Clean and Professional
   if (stage === 'welcome') {
