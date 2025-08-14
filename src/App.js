@@ -253,11 +253,11 @@ function App() {
               <div className="group cursor-pointer transform transition-all duration-300 hover:scale-105">
                 <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-12 border border-gray-200 hover:border-teal-400 shadow-lg hover:shadow-xl transition-all duration-300 h-80 flex flex-col justify-center">
                   <div className="text-center">
-                    <div className="w-28 h-28 bg-gradient-to-r from-teal-600 to-teal-700 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform">
+                    <div className="w-28 h-28 bg-gradient-to-r from-teal-600 to-teal-700 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                       <Package className="w-14 h-14 text-white" />
                     </div>
-                    <h3 className="text-3xl font-bold text-gray-900 mb-6">Orders</h3>
-                    <p className="text-gray-600 text-lg mb-6 leading-relaxed">
+                    <h3 className="text-3xl font-bold text-gray-900 mb-4">Orders</h3>
+                    <p className="text-gray-600 text-lg mb-4 leading-relaxed">
                       Track your exhibition orders in real-time with detailed progress updates
                     </p>
                     <div className="flex items-center justify-center space-x-3 text-teal-600 group-hover:text-teal-700 font-semibold text-lg">
@@ -272,11 +272,11 @@ function App() {
               <div className="group cursor-pointer transform transition-all duration-300 hover:scale-105">
                 <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-12 border border-gray-200 hover:border-teal-400 shadow-lg hover:shadow-xl transition-all duration-300 h-80 flex flex-col justify-center">
                   <div className="text-center">
-                    <div className="w-28 h-28 bg-gradient-to-r from-teal-600 to-teal-700 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform">
+                    <div className="w-28 h-28 bg-gradient-to-r from-teal-600 to-teal-700 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                       <CheckCircle className="w-14 h-14 text-white" />
                     </div>
-                    <h3 className="text-3xl font-bold text-gray-900 mb-6">Checklist</h3>
-                    <p className="text-gray-600 text-lg mb-6 leading-relaxed">
+                    <h3 className="text-3xl font-bold text-gray-900 mb-4">Checklist</h3>
+                    <p className="text-gray-600 text-lg mb-4 leading-relaxed">
                       Monitor your booth setup progress with comprehensive tracking
                     </p>
                     <div className="flex items-center justify-center space-x-3 text-teal-600 group-hover:text-teal-700 font-semibold text-lg">
