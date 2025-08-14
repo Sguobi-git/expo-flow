@@ -257,7 +257,7 @@ function App() {
                       <Package className="w-14 h-14 text-white" />
                     </div>
                     <h3 className="text-3xl font-bold text-gray-900 mb-6">Orders</h3>
-                    <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+                    <p className="text-gray-600 text-lg mb-6 leading-relaxed">
                       Track your exhibition orders in real-time with detailed progress updates
                     </p>
                     <div className="flex items-center justify-center space-x-3 text-teal-600 group-hover:text-teal-700 font-semibold text-lg">
@@ -276,7 +276,7 @@ function App() {
                       <CheckCircle className="w-14 h-14 text-white" />
                     </div>
                     <h3 className="text-3xl font-bold text-gray-900 mb-6">Checklist</h3>
-                    <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+                    <p className="text-gray-600 text-lg mb-6 leading-relaxed">
                       Monitor your booth setup progress with comprehensive tracking
                     </p>
                     <div className="flex items-center justify-center space-x-3 text-teal-600 group-hover:text-teal-700 font-semibold text-lg">
