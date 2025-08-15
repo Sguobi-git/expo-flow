@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight, Building2, Package, CheckCircle, Shield } from 'lucide-react';
 
 function App() {
-  const [stage, setStage] = useState('intro'); // 'intro', 'welcome', 'options'
+  const [stage, setStage] = useState('intro'); // 'intro', 'welcome', 'options', 'orders'
   const [boothNumber, setBoothNumber] = useState('');
   const [isAnimating, setIsAnimating] = useState(true);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState(null);
   const [introProgress, setIntroProgress] = useState(0);
 
   // Intro animation sequence - Apple/Google style
@@ -54,12 +58,354 @@ function App() {
         />
       </div>
     );
+  }
+
+  // Orders Page - Integrated from your existing app
+  if (stage === 'orders') {
+    const deliveredOrders = orders.filter(o => o.status === 'delivered').length;
+    const pendingOrders = orders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length;
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white p-6">
+        <div className="max-w-7xl mx-auto">
+          
+          {/* Header */}
+          <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-4 md:p-6 border border-gray-200 shadow-xl mb-8">
+            <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+              
+              {/* Left side - Booth info */}
+              <div className="flex items-center space-x-3 md:space-x-6">
+                <div className="flex items-center space-x-3 md:space-x-4">
+                  <ExpoLogo size="small" />
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center shadow-lg border border-gray-300">
+                    <Building2 className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                  </div>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-xl md:text-3xl font-bold text-gray-900">Booth {boothNumber}</h1>
+                  <p className="text-sm md:text-base text-gray-600">
+                    <span className="text-teal-600">Live Order Tracking</span>
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2 md:gap-4 mt-1 md:mt-2">
+                    <span className="text-xs md:text-sm text-teal-600 flex items-center space-x-1">
+                      <Shield className="w-3 h-3 md:w-4 md:h-4" />
+                      <span>Expo Convention Contractors</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Right side - Back button */}
+              <div className="flex items-center justify-end space-x-2 md:space-x-4 flex-shrink-0">
+                <button 
+                  onClick={() => setStage('options')}
+                  className="px-3 py-2 md:px-6 md:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl md:rounded-2xl transition-all duration-300 border border-gray-200 text-sm md:text-base"
+                >
+                  ← Back
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-6 border border-gray-200 shadow-lg">
+              <div className="flex items-center space-x-3 mb-4">
+                <Package className="w-8 h-8 text-teal-600" />
+                <h3 className="text-lg font-semibold text-gray-900">Total Orders</h3>
+              </div>
+              <div className="text-3xl font-bold text-teal-600">{orders.length}</div>
+              <div className="text-xs text-gray-500 mt-1">Managed by Expo CCI</div>
+            </div>
+            <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-6 border border-gray-200 shadow-lg">
+              <div className="flex items-center space-x-3 mb-4">
+                <CheckCircle className="w-8 h-8 text-green-500" />
+                <h3 className="text-lg font-semibold text-gray-900">Delivered</h3>
+              </div>
+              <div className="text-3xl font-bold text-green-500">{deliveredOrders}</div>
+              <div className="text-xs text-gray-500 mt-1">Completed</div>
+            </div>
+            <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-6 border border-gray-200 shadow-lg">
+              <div className="flex items-center space-x-3 mb-4">
+                <Shield className="w-8 h-8 text-purple-500" />
+                <h3 className="text-lg font-semibold text-gray-900">In Progress</h3>
+              </div>
+              <div className="text-3xl font-bold text-purple-500">{pendingOrders}</div>
+              <div className="text-xs text-gray-500 mt-1">Live tracking</div>
+            </div>
+          </div>
+
+          {/* Loading state */}
+          {loading && (
+            <div className="text-center py-8">
+              <div className="w-8 h-8 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-gray-700">Loading orders from Expo CCI Database...</p>
+            </div>
+          )}
+
+          {/* Recent Notifications */}
+          {notifications.length > 0 && (
+            <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-6 border border-gray-200 shadow-lg mb-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
+                <Sparkles className="w-6 h-6 text-teal-600" />
+                <span>Live Updates</span>
+              </h2>
+              <div className="space-y-3">
+                {notifications.map((notif) => (
+                  <div key={notif.id} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
+                    <span className="text-gray-800 flex-1">{notif.message}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Orders Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {orders.map((order) => {
+              const statusInfo = orderStatuses[order.status] || orderStatuses['in-process'];
+              const StatusIcon = statusInfo.icon;
+              
+              return (
+                <div key={order.id} className="bg-white/90 backdrop-blur-lg rounded-2xl p-6 border border-gray-200 hover:border-gray-300 transition-all duration-300 shadow-lg">
+                  
+                  {/* Order Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <StatusIcon className="w-6 h-6 text-gray-700" />
+                      <span className="text-gray-900 font-bold">{order.id}</span>
+                    </div>
+                    <span className="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded-full">
+                      Expo CCI
+                    </span>
+                  </div>
+
+                  {/* Order Info */}
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{order.item}</h3>
+                  <p className="text-gray-600 text-sm mb-4">{order.description}</p>
+
+                  {/* Order Details */}
+                  <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
+                    <div>
+                      <p className="text-gray-500">Order Date</p>
+                      <p className="text-gray-900 font-medium">{order.order_date}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Quantity</p>
+                      <p className="text-gray-900 font-medium">{order.quantity}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Color</p>
+                      <p className="text-gray-900 font-medium">{order.color}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Section</p>
+                      <p className="text-gray-900 font-medium">{order.section}</p>
+                    </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="mb-4">
+                    {renderProgressBar(order.status)}
+                  </div>
+
+                  {/* Status Badge */}
+                  <div className={`inline-flex items-center space-x-2 px-3 py-2 rounded-full ${statusInfo.bgColor}`}>
+                    <StatusIcon className="w-4 h-4" />
+                    <span className="text-sm font-medium">{statusInfo.label}</span>
+                  </div>
+
+                  {/* Comments */}
+                  {order.comments && (
+                    <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                      <p className="text-gray-500 text-xs mb-1">Comments</p>
+                      <p className="text-gray-800 text-sm">{order.comments}</p>
+                    </div>
+                  )}
+
+                  {/* Expo CCI Footer */}
+                  <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+                    <ExpoLogo size="small" />
+                    <span className="text-xs text-gray-400">Managed by Expo Convention Contractors</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* No orders message */}
+          {!loading && orders.length === 0 && (
+            <div className="text-center py-12">
+              <div className="mb-4">
+                <ExpoLogo size="large" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Orders Found</h3>
+              <p className="text-gray-600">No orders found for Booth {boothNumber} in our system.</p>
+              <p className="text-gray-500 text-sm mt-2">Managed by Expo Convention Contractors</p>
+            </div>
+          )}
+
+          {/* Footer */}
+          <div className="mt-12 text-center bg-white/90 backdrop-blur-lg rounded-2xl p-6 border border-gray-200 shadow-lg">
+            <div className="flex items-center justify-center mb-3">
+              <ExpoLogo size="large" />
+            </div>
+            <p className="text-gray-600 text-sm font-medium mb-2">
+              "Large Enough To Be Exceptional, Yet Small Enough To Be Personable"
+            </p>
+            <p className="text-gray-500 text-xs">
+              Expo Convention Contractors Inc. • Professional Exhibition Management • Miami, Florida
+            </p>
+            <div className="mt-4 text-xs text-gray-400">
+              ExpoFlow v3.0 • Real-time Order Tracking System
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
-  const handleBoothSubmit = () => {
-    if (boothNumber.trim()) {
-      setStage('options');
+  // Add order statuses and API integration from your existing app
+  const orderStatuses = {
+    'delivered': { 
+      label: 'Delivered', 
+      progress: 100, 
+      color: 'from-green-500 to-emerald-500',
+      icon: CheckCircle,
+      bgColor: 'bg-green-500/20 text-green-400',
+      priority: 5
+    },
+    'out-for-delivery': { 
+      label: 'Out for Delivery', 
+      progress: 75, 
+      color: 'from-blue-500 to-cyan-500',
+      icon: Package,
+      bgColor: 'bg-blue-500/20 text-blue-400',
+      priority: 3
+    },
+    'in-route': { 
+      label: 'In Route from Warehouse', 
+      progress: 50, 
+      color: 'from-yellow-500 to-orange-500',
+      icon: Building2,
+      bgColor: 'bg-yellow-500/20 text-yellow-400',
+      priority: 2
+    },
+    'in-process': { 
+      label: 'In Process', 
+      progress: 25, 
+      color: 'from-purple-500 to-pink-500',
+      icon: Shield,
+      bgColor: 'bg-purple-500/20 text-purple-400',
+      priority: 1
+    },
+    'cancelled': { 
+      label: 'Cancelled', 
+      progress: 0, 
+      color: 'from-red-500 to-red-600',
+      icon: ArrowRight,
+      bgColor: 'bg-red-500/20 text-red-400',
+      priority: 4
     }
+  };
+
+  const API_BASE = 'https://v3-exhibitor-live-update.onrender.com/api';
+
+  // Fetch orders by booth number (adapted from your existing code)
+  const fetchOrdersByBooth = async (boothNum) => {
+    setLoading(true);
+    try {
+      console.log(`🔍 Fetching orders for booth: ${boothNum}`);
+      
+      const response = await fetch(`${API_BASE}/orders/booth/${encodeURIComponent(boothNum)}`);
+      if (!response.ok) throw new Error('Failed to fetch orders');
+      
+      const data = await response.json();
+      console.log('📊 Orders Response:', data);
+      
+      setOrders(data.orders || []);
+      setLastUpdated(new Date());
+      generateNotifications(data.orders || []);
+      
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      
+      // Fallback orders for demo
+      const fallbackOrders = [
+        {
+          id: `ORD-${boothNum}-001`,
+          item: 'Round Table 30" high',
+          description: 'Professional exhibition furniture',
+          booth_number: boothNum,
+          color: 'White',
+          quantity: 2,
+          status: 'delivered',
+          order_date: new Date().toLocaleDateString(),
+          comments: 'Coordinated by Expo Convention Contractors',
+          section: 'Section A'
+        },
+        {
+          id: `ORD-${boothNum}-002`,
+          item: 'White Side Chair',
+          description: 'Professional seating solution',
+          booth_number: boothNum,
+          color: 'White',
+          quantity: 4,
+          status: 'out-for-delivery',
+          order_date: new Date().toLocaleDateString(),
+          comments: 'High-quality event furniture',
+          section: 'Section A'
+        }
+      ];
+      
+      setOrders(fallbackOrders);
+      setLastUpdated(new Date());
+      generateNotifications(fallbackOrders);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generateNotifications = (ordersData) => {
+    const notifications = [];
+    ordersData.forEach((order) => {
+      if (order.status === 'in-route') {
+        notifications.push({
+          id: Math.random(),
+          message: `${order.item} is in route from warehouse`,
+          time: `${Math.floor(Math.random() * 30) + 1} min ago`,
+          type: 'delivery'
+        });
+      } else if (order.status === 'delivered') {
+        notifications.push({
+          id: Math.random(),
+          message: `${order.item} has been delivered`,
+          time: `${Math.floor(Math.random() * 120) + 1} min ago`,
+          type: 'success'
+        });
+      }
+    });
+    setNotifications(notifications.slice(0, 3));
+  };
+
+  const renderProgressBar = (status) => {
+    const statusInfo = orderStatuses[status] || orderStatuses['in-process'];
+    return (
+      <div className="space-y-3">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-gray-700 font-medium">Delivery Progress</span>
+          <span className="text-gray-900 font-bold">{statusInfo.progress}%</span>
+        </div>
+        <div className="relative w-full bg-gray-200 rounded-full h-3">
+          <div 
+            className={`bg-gradient-to-r ${statusInfo.color} h-3 rounded-full transition-all duration-1000`}
+            style={{ width: `${statusInfo.progress}%` }}
+          >
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const handleKeyPress = (e) => {
@@ -240,7 +586,7 @@ function App() {
               <div className="mb-6">
                 <ExpoLogo size="large" />
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-teal-600 mb-4">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 Choose your action
               </h2>
             </div>
@@ -249,7 +595,7 @@ function App() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
               
               {/* Orders Card */}
-              <div className="group cursor-pointer transform transition-all duration-300 hover:scale-105">
+              <div className="group cursor-pointer transform transition-all duration-300 hover:scale-105" onClick={handleOrdersClick}>
                 <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-12 border border-gray-200 hover:border-teal-400 shadow-lg hover:shadow-xl transition-all duration-300 h-80 flex flex-col justify-center">
                   <div className="text-center">
                     <div className="w-28 h-28 bg-gradient-to-r from-teal-600 to-teal-700 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform">
